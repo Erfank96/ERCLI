@@ -1,7 +1,12 @@
+mod time_commands;
+mod crypto_commands;
+mod help_command;
+
 use std::io::{self, Write};
 
 fn main() {
-    println!("Welcome to erfan interactive command shell! Type 'exit' to quit.");
+    println!("Welcome to erfan interactive command shell!");
+    println!("Type 'help' for a list of commands, 'exit' to quit.\n");
     println!("Type 'exit' to quit.");
     loop {
         // Print prompt
@@ -9,25 +14,36 @@ fn main() {
         io::stdout().flush().unwrap();
 
         // Read user input
-        let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        let input = input.trim();
+        let mut line = String::new();
+        if io::stdin().read_line(&mut line).is_err() {
+            println!("Error reading input");
+            continue;
+        }
+        let line = line.trim();
 
-        // Handle exit
-        if input.eq_ignore_ascii_case("exit") {
-            println!("Goodbye!");
-            break;
+        // Empty line → continue
+        if line.is_empty() {
+            continue;
         }
 
-        // Handle commands
-        match input {
-            "hello" => println!("Hello there!"),
-            "time" => {
-                let now = chrono::Local::now();
-                println!("Current time: {}", now);
+        // Split into command + args
+        let mut parts = line.split_whitespace();
+        let cmd = parts.next().unwrap();               // we already know there is at least one token
+        let args: Vec<&str> = parts.collect();
+
+        // Dispatch
+        match cmd {
+            "help" => help_command::print_help(),
+            // Handle exit
+            "exit" | "quit" => {
+                println!("Goodbye!");
+                break;
             }
-            _ => println!("Unknown command: {}", input),
+            "time" => time_commands::timeCommand(&args),
+            "crypto" => crypto_commands::handle(&args),
+            _ => println!("Unknown command: {}. Type 'help' for usage.", cmd),
         }
     }
 }
+
 

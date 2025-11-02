@@ -9,8 +9,10 @@ pub fn print_help() {
   time now            – print current local time
   time utc            – print current UTC time
 
-  crypto btc          – current Bitcoin price (USD)
-  crypto eth          – current Ethereum price (USD)
-"#
+r#"  crypto [coins...]   – show crypto prices (USD)
+        crypto          → all coins
+        crypto btc      → only Bitcoin
+        crypto eth sol  → Ethereum + Solana
+        Supported: btc, eth, bnb, sol, xrp, ada, doge, trx, avax, shib"#
     );
 }
