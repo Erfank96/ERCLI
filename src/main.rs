@@ -1,6 +1,7 @@
 mod time_commands;
 mod crypto_commands;
 mod help_command;
+mod date_commands;
 
 use std::io::{self, Write};
 
@@ -39,8 +40,9 @@ fn main() {
                 println!("Goodbye!");
                 break;
             }
-            "time" => time_commands::timeCommand(&args),
+            "time" => time_commands::time_command(&args),
             "crypto" => crypto_commands::handle(&args),
+            "date" => date_commands::date_command(&args),
             _ => println!("Unknown command: {}. Type 'help' for usage.", cmd),
         }
     }
