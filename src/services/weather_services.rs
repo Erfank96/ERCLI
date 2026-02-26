@@ -77,9 +77,7 @@ impl WeatherService {
             name: name.to_string(),
             country: country_code.to_string(),
             temp: current["temperature"].as_f64().unwrap_or(0.0),
-            feels_like: current["temperature"].as_f64().unwrap_or(0.0), // Open-Meteo basic doesn't have feels_like
             description: weather_code_to_description(current["weathercode"].as_i64().unwrap_or(0)),
-            humidity: 0, // Not in basic current_weather, would need additional params
             wind_speed: current["windspeed"].as_f64().unwrap_or(0.0),
         })
     }
