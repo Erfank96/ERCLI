@@ -1,14 +1,19 @@
-mod time_commands;
-mod crypto_commands;
-mod help_command;
-mod date_commands;
+mod commands;
+mod models;
+mod services;
 
 use std::io::{self, Write};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!("Welcome to erfan interactive command shell!");
     println!("Type 'help' for a list of commands, 'exit' to quit.\n");
     println!("Type 'exit' to quit.");
+
+    // Load API key from env or config
+    let weather_api_key = std::env::var("OPENWEATHER_API_KEY")
+        .unwrap_or_else(|_| "demo".to_string());
+
     loop {
         // Print prompt
         print!("> ");
@@ -34,15 +39,17 @@ fn main() {
 
         // Dispatch
         match cmd {
-            "help" => help_command::print_help(),
+            "help" => commands::help_command::print_help().await,
             // Handle exit
             "exit" | "quit" => {
                 println!("Goodbye!");
                 break;
             }
-            "time" => time_commands::time_command(&args),
-            "crypto" => crypto_commands::handle(&args),
-            "date" => date_commands::date_command(&args),
+            "time" => commands::time_commands::time_command(&args),
+            "crypto" => commands::crypto_commands::handle(&args),
+            "date" => commands::date_commands::date_command(&args),
+            "weather" => commands::weather_commands::handle(&args, &weather_api_key).await,
+            //"version" => commands::version_command::run(&args).await,
             _ => println!("Unknown command: {}. Type 'help' for usage.", cmd),
         }
     }

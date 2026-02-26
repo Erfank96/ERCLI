@@ -1,10 +1,9 @@
 use chrono;
 use parsidate;
-use parsidate::ParsiDate;
 
 pub fn date_command(args: &[&str]){
     let now_gregorian_date = chrono::Local::now().date_naive();
-    let solar_date= match ParsiDate::from_gregorian(now_gregorian_date) {
+    let solar_date= match parsidate::ParsiDate::from_gregorian(now_gregorian_date) {
         Ok(date) => date,
         Err(e) => {
             eprintln!("Error: Could not convert date to Solar Hijri ({})", e);
