@@ -4,8 +4,7 @@ mod services;
 
 use std::io::{self, Write};
 
-#[tokio::main]
-async fn main() {
+fn main() {
     println!("Welcome to erfan interactive command shell!");
     println!("Type 'help' for a list of commands, 'exit' to quit.\n");
     println!("Type 'exit' to quit.");
@@ -39,7 +38,7 @@ async fn main() {
 
         // Dispatch
         match cmd {
-            "help" => commands::help_command::print_help().await,
+            "help" => commands::help_command::print_help(),
             // Handle exit
             "exit" | "quit" => {
                 println!("Goodbye!");
@@ -48,7 +47,14 @@ async fn main() {
             "time" => commands::time_commands::time_command(&args),
             "crypto" => commands::crypto_commands::handle(&args),
             "date" => commands::date_commands::date_command(&args),
-            "weather" => commands::weather_commands::handle(&args, &weather_api_key).await,
+            "weather" => {
+                let rt = tokio::runtime::Runtime::new()
+                    .expect("Failed to create Tokio runtime");
+                rt.block_on(async {
+                    commands::weather_commands::handle(&args, &weather_api_key).await;
+                })
+
+            },
             //"version" => commands::version_command::run(&args).await,
             _ => println!("Unknown command: {}. Type 'help' for usage.", cmd),
         }
